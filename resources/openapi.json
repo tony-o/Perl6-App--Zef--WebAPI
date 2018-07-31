@@ -1,0 +1,271 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Zef Web API",
+        "version": "0.0.1",
+        "description": "API for Perl6 module discovery and recommendation"
+    },
+    "tags": [
+        {
+            "name": "Recommendation Manager",
+            "description": "Makes recommendations for distributions"
+        }
+    ],
+    "paths": {
+        "/available": {
+            "get": {
+                "summary": "Get a list of all distributions",
+                "operationId": "available",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/metaSpecList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/candidates": {
+            "post": {
+                "summary": "Get a list of all matching distributions in order of recommendation",
+                "operationId": "candidates",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/dependencySpec"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/metaSpecList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/install": {
+            "post": {
+                "summary": "Add a distribution to the index(es).",
+                "operationId": "install",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/dependencySpec"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/metaSpecList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "metaSpecList": {
+                "type": "object",
+                "required": [
+                    "total",
+                    "data"
+                ],
+                "properties": {
+                    "total": {
+                        "description": "Total number of distributions",
+                        "type": "integer"
+                    },
+                    "data": {
+                        "description": "List of all matching distributions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/metaSpec"
+                        }
+                    }
+                }
+            },
+            "metaSpec": {
+                "allOf" : [
+                    {
+                        "$ref": "#/components/schemas/dependencySpec"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "perl": {
+                                "description": "The minimal perl version for which this distribution can be installed.",
+                                "type": "string"
+                            },
+                            "meta-version": {
+                                "description": "The version of the META6.json schema in use, as a quoted Version literal (without the 'v' prefix).",
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "provides": {
+                                "description": "A list of module - local filename pairs that this distribution makes available to be used.",
+                                "type": "object"
+                            },
+                            "depends": {
+                                "description": "A list of run-time dependencies.",
+                                "type": "array",
+                                "nullable": true,
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/dependencySpec"
+                                        }
+                                    ]
+                                }
+                            },
+                            "test-depends": {
+                                "description": "A list of test-time dependencies.",
+                                "type": "array",
+                                "nullable": true,
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/dependencySpec"
+                                        }
+                                    ]
+                                }
+                            },
+                            "build-depends": {
+                                "description": "A list of build-time dependencies.",
+                                "type": "array",
+                                "nullable": true,
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/dependencySpec"
+                                        }
+                                    ]
+                                }
+                            },
+                            "description": {
+                                "description": "A short description of this distribution.",
+                                "type": "string"
+                            },
+                            "authors": {
+                                "description": "A list of (mnemonic) names of people who work / have worked on this distribution.",
+                                "type": "array",
+                                "nullable": true,
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "resources": {
+                                "description": "A list of file names, each of them corresponding to a file in the 'resources' directory in the distribution before or at build time.",
+                                "type": "array",
+                                "nullable": true,
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "license": {
+                                "description": "The SPDX license identifier that the package is distributed under.",
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "tags": {
+                                "description": "A list of general purpose tags.",
+                                "type": "array",
+                                "nullable": true,
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "support": {
+                                "type": "object",
+                                "description": "Support information for this distribution.",
+                                "properties": {
+                                    "email": {
+                                        "description": "The email address of the owner of this distribution.",
+                                        "type": "string"
+                                    },
+                                    "mailinglist": {
+                                        "description": "The mailinglist of users of this distribution.",
+                                        "type": "string"
+                                    },
+                                    "bugtracker": {
+                                        "description": "The bugtracker of this distribution.",
+                                        "type": "string"
+                                    },
+                                    "source": {
+                                        "description": "The URL of the source of this distribution.",
+                                        "type": "string"
+                                    },
+                                    "irc": {
+                                        "description": "The URL of the IRC channel where this distribution can be discussed",
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependencySpec" : {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name identifying this distribution.",
+                        "type": "string"
+                    },
+                    "auth": {
+                        "description": "A globally unique identifier for a e.g. person or organization.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "version": {
+                        "description": "The version literal for this distribution.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "api": {
+                        "description": "The api (version) literal for this distribution.",
+                        "type": "string",
+                        "nullable": true
+                    }
+                }                    
+            }
+        }
+    }
+}
+

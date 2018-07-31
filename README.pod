@@ -1,0 +1,40 @@
+=pod
+
+=encoding utf8
+
+=head2 App::Zef::WebAPI
+
+A Perl6 recommendation api service. Built using Cro and OpenAPI 3.0; backed by locally installed distributions or a database.
+
+=head1 Quick Start
+
+=head2 Server
+
+    $ git clone https://github.com/ugexe/Perl6-App--Zef--WebAPI.git
+    $ cd Perl6-App--Zef--WebAPI
+    $ zef install . --deps-only --/test
+    $ psql -f migrations/0.sql targetdatabase
+    $ perl6 -I. bin/zef-api-server.p6
+
+    Listening at http://localhost:3000
+
+=head2 Client
+
+    # view all distributions
+    $ curl -H "Accept: application/json" -H "Content-type: application/json" -X GET  http://localhost:3000/available
+
+    # query for distributions
+    $ curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name":"Test"}' http://localhost:3000/candidates
+
+=head1 Backends
+
+=head2 App::Zef::WebAPI::Model::CURI
+
+Uses installed modules as an index of distributions.
+i.e. installed modules as-a-ecosystem ( so not suitable for modules that generate files at build time )
+
+=head2 App::Zef::WebAPI::Model::DB
+
+Uses a database ( schema found in `migrations/0.sql` ) as an index of distributions.
+
+=cut

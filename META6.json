@@ -1,0 +1,23 @@
+{
+    "name" : "App::Zef::WebAPI",
+    "auth" : "github:ugexe",
+    "api" : "0",
+    "version" : "0.0.1",
+    "provides" : {
+        "App::Zef::WebAPI" : "lib/App/Zef/WebAPI.pm6",
+        "App::Zef::WebAPI::Model::DB" : "lib/App/Zef/WebAPI/Model/DB.pm6",
+        "App::Zef::WebAPI::Model::CURI" : "lib/App/Zef/WebAPI/Model/CURI.pm6"
+    },
+    "depends" : [
+        "Cro::Core",
+        "Cro::OpenAPI::RoutesFromDefinition",
+        "DB::Pg"
+    ],
+    "test-depends" : [
+        "Test",
+        "Cro::HTTP::Test"
+    ],
+    "resources" : [
+        "openapi.json"
+    ]
+}
